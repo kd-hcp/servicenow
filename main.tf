@@ -5,7 +5,7 @@ provider "aws" {
 variable "server_message" {
     type = string
     description = "Message displayed on server."
-    # default = "Hello!"
+    default = "Hello!"
 }
 
 # Retrieve the proper machine image for EC2 instance
