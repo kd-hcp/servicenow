@@ -1,7 +1,5 @@
-provider "aws" {
-    region = "us-east-2"
-}
 
+/*
 variable "server_message" {
     type = string
     description = "Message displayed on server."
@@ -66,3 +64,4 @@ output "aws_instance_ip" {
   value = aws_instance.ec2_test.public_ip
   description = "Public IP address for web access"
 }
+*/
