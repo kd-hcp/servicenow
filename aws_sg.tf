@@ -1,4 +1,4 @@
-/*
+
 # Create Security Group for compute http access
 resource "aws_security_group" "allow-http" {
   name  = "allow-http"
@@ -20,4 +20,3 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
   ip_protocol       = -1
 }
 
-#*/
