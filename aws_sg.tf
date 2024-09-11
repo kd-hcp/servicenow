@@ -20,3 +20,17 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
   ip_protocol       = -1
 }
 
+check "check_ssh_ingress" {
+  data "aws_vpc_security_group_rule" "sg_rule_data" {
+    security_group_rule_id = aws_vpc_security_group_ingress_rule.allow-http.id
+  }
+  assert {
+    condition = (
+      data.aws_vpc_security_group_rule.sg_rule_data.is_egress==false && 
+      data.aws_vpc_security_group_rule.sg_rule_data.from_port == 80 &&
+      data.aws_vpc_security_group_rule.sg_rule_data.to_port == 80 &&
+      data.aws_vpc_security_group_rule.sg_rule_data.ip_protocol=="tcp"
+    )
+    error_message = "SSH connection is not enabled on VPC Security Group"
+  }
+}
