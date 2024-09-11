@@ -19,11 +19,11 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = -1
 }
+data "aws_vpc_security_group_rule" "sg_rule_data" {
+  security_group_rule_id = aws_vpc_security_group_ingress_rule.allow-http.id
+}
 
-check "check_ssh_ingress" {
-  data "aws_vpc_security_group_rule" "sg_rule_data" {
-    security_group_rule_id = aws_vpc_security_group_ingress_rule.allow-http.id
-  }
+check "check_ssh_ingress" {  
   assert {
     condition = (
       data.aws_vpc_security_group_rule.sg_rule_data.is_egress==false && 
