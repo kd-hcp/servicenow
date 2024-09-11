@@ -65,32 +65,3 @@ output "aws_instance_ip" {
   description = "Public IP address for web access"
 }
 */
-
-provider "random" {}
-resource "random_string" "bucket_suffix" {
-  length  = 8
-  special = false
-  upper   = false
-  lower   = true
-  numeric  = true
-}
-resource "aws_s3_bucket" "example" {
-  bucket = "my-private-bucket-${random_string.bucket_suffix.result}"
-}
-resource "aws_s3_bucket_versioning" "versioning_example" {
-  bucket = aws_s3_bucket.example.id
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-# Add validation to ensure versioning is enabled
-check "check_s3_versioning" {
-  assert {
-    condition     = aws_s3_bucket_versioning.versioning_example.versioning_configuration[0].status == "Enabled"
-    error_message = "S3 bucket versioning must be enabled."
-  }
-}
-output "s3_bucket_versioning_status" {
-  description = "The versioning status of the S3 bucket"
-  value       = aws_s3_bucket_versioning.versioning_example.versioning_configuration[0].status
-}
