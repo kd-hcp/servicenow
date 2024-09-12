@@ -39,7 +39,7 @@ data "aws_vpc_security_group_rules" "sg_rule" {
   }
   filter {
     name = "ip-permissions.protocol"
-    values = "tcp"
+    values = ["tcp"]
   }
 }
 output "rule_out" {
