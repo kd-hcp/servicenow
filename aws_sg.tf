@@ -30,8 +30,9 @@ data "aws_vpc_security_group_rule" "sg_rule" {
     values = [aws_security_group.allow-http.id]
   }
 }
+
 output "rule_out" {
-  value = data.aws_vpc_security_group_rules.sg_rule
+  value = data.aws_vpc_security_group_rule.sg_rule
 }
 
 
