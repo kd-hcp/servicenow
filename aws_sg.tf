@@ -24,25 +24,27 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
   ip_protocol       = -1
 }
 
-data "aws_security_group" "sg_data" {
-  name = var.sg_name
-}
-
-data "aws_vpc_security_group_rules" "sg_rules" {
+data "aws_vpc_security_group_rule" "sg_rule" {
   filter {
-    name = "group-id"
-    values = [data.aws_security_group.sg_data.id]
+    name = "group-name"
+    values=[var.sg_name]
+  }
+  filter {
+    name = "is_egress"
+    values = [false]
+  }
+  filter {
+    name = "ip_protocol"
+    values = ["tcp"]
+  }
+  filter {
+    name = "from_port"
+    values = ["80"]
   }
 }
 
-output "security_group_rules" {
-  value = [for rule in data.aws_vpc_security_group_rules.sg_rules.rules : {
-    type        = rule.type
-    from_port   = rule.from_port
-    to_port     = rule.to_port
-    protocol    = rule.protocol
-    cidr_blocks = rule.cidr_blocks
-  }]
+output "sg_rule" {
+  value = data.aws_vpc_security_group_rule.sg_rule
 }
 
 # check "check_http_ingress" {  
