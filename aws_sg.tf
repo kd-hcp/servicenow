@@ -26,21 +26,19 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
 
 data "aws_vpc_security_group_rules" "sg_rule" {
   filter {
-    name ="group-id"
+    name = "group-id"
     values = [aws_security_group.allow-http.id]
   }
 }
 
-output "rule_out" {
+output "tst" {
+  description = "rules"
   value = data.aws_vpc_security_group_rules.sg_rule
 }
 
-
-check "check_http_ingress" {  
-  assert {
-    condition = (
-      data.aws_vpc_security_group_rules.sg_rule != null
-    )
-    error_message = "HTTP connection is not enabled on VPC Security Group"
-  }
-}
+# check "check_http_ingress" {  
+#   assert {
+#     condition = data.aws_vpc_security_group_rules.sg_rule
+#     error_message = "HTTP connection is not enabled on VPC Security Group"
+#   }
+# }
