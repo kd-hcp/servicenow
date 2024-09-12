@@ -44,7 +44,7 @@ data "aws_vpc_security_group_rules" "sg_rule" {
 }
 
 output "sg_rule" {
-  value = data.aws_vpc_security_group_rule.sg_rule
+  value = data.aws_vpc_security_group_rules.sg_rule
 }
 
 # check "check_http_ingress" {  
