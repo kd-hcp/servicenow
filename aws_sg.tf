@@ -1,7 +1,11 @@
 
 # Create Security Group for compute http access
+variable "sg_name" {
+  default = "allow-http"
+}
+
 resource "aws_security_group" "allow-http" {
-  name  = "allow-http"
+  name  = var.sg_name
 }
 
 # Security Group - Ingress Rule
@@ -19,21 +23,35 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = -1
 }
-data "aws_vpc_security_group_rule" "sg_rule_data" {
-  security_group_rule_id = aws_vpc_security_group_ingress_rule.allow-http.id
+
+data "aws_vpc_security_group_rules" "sg_rule" {
+  filter {
+    name = "group-name"
+    values = [var.sg_name]
+  }
+  filter {
+    name ="ip-permissions.to-port"
+    values = ["80"]
+  }
+  filter {
+    name = "ip-permissions.from-port"
+    values = ["80"]
+  }
+  filter {
+    name = "ip-permissions.protocol"
+    values = "tcp"
+  }
 }
 output "rule_out" {
-  value = data.aws_vpc_security_group_rule.sg_rule_data.id
+  value = data.aws_vpc_security_group_rules.sg_rule.ids
 }
 
-check "check_ssh_ingress" {  
+
+check "check_http_ingress" {  
   assert {
     condition = (
-      data.aws_vpc_security_group_rule.sg_rule_data.is_egress==false && 
-      data.aws_vpc_security_group_rule.sg_rule_data.from_port == 80 &&
-      data.aws_vpc_security_group_rule.sg_rule_data.to_port == 80 &&
-      data.aws_vpc_security_group_rule.sg_rule_data.ip_protocol=="tcp"
+      length(data.aws_vpc_security_group_rules.sg_rule.ids)>0
     )
-    error_message = "SSH connection is not enabled on VPC Security Group"
+    error_message = "HTTP connection is not enabled on VPC Security Group"
   }
 }
