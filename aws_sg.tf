@@ -22,6 +22,9 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
 data "aws_vpc_security_group_rule" "sg_rule_data" {
   security_group_rule_id = aws_vpc_security_group_ingress_rule.allow-http.id
 }
+output "rule_out" {
+  value = data.aws_vpc_security_group_rule.sg_rule_data.id
+}
 
 check "check_ssh_ingress" {  
   assert {
