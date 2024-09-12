@@ -46,7 +46,7 @@ check "check_http_ingress" {
   assert {
     condition     = anytrue([for sg in aws_instance.ec2_test.vpc_security_group_ids : 
                               length(
-                                [for rule in sg.allow-http.ingress : 
+                                [for rule in sg.ingress : 
                                   rule if rule.from_port == 80 && rule.to_port == 80 && rule.protocol == "tcp"]
                               ) > 0])
     error_message = "HTTP connection is not enabled on VPC Security Group"
