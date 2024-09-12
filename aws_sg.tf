@@ -24,7 +24,7 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
   ip_protocol       = -1
 }
 
-data "aws_vpc_security_group_rule" "sg_rule" {
+data "aws_vpc_security_group_rules" "sg_rule" {
   filter {
     name = "group-name"
     values=[var.sg_name]
