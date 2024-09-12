@@ -24,18 +24,10 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
   ip_protocol       = -1
 }
 
-data "aws_vpc_security_group_rules" "sg_rule" {
+data "aws_vpc_security_group_rule" "sg_rule" {
   filter {
-    name ="ip-permissions.to-port"
-    values = ["80"]
-  }
-  filter {
-    name = "ip-permissions.from-port"
-    values = ["80"]
-  }
-  filter {
-    name = "ip-permissions.protocol"
-    values = ["tcp"]
+    name ="group-id"
+    values = [aws_security_group.allow-http.id]
   }
 }
 output "rule_out" {
@@ -46,7 +38,7 @@ output "rule_out" {
 check "check_http_ingress" {  
   assert {
     condition = (
-      length(data.aws_vpc_security_group_rules.sg_rule.ids)>0
+      data.aws_vpc_security_group_rule.sg_rule.from_port == "80"
     )
     error_message = "HTTP connection is not enabled on VPC Security Group"
   }
