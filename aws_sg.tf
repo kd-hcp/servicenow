@@ -26,10 +26,6 @@ resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
 
 data "aws_vpc_security_group_rules" "sg_rule" {
   filter {
-    name = "group-name"
-    values = [var.sg_name]
-  }
-  filter {
     name ="ip-permissions.to-port"
     values = ["80"]
   }
@@ -43,7 +39,7 @@ data "aws_vpc_security_group_rules" "sg_rule" {
   }
 }
 output "rule_out" {
-  value = data.aws_vpc_security_group_rules.sg_rule.ids
+  value = data.aws_vpc_security_group_rules.sg_rule
 }
 
 
