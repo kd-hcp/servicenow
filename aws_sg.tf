@@ -37,10 +37,10 @@ data "aws_vpc_security_group_rule" "sg_rule" {
     name = "ip_protocol"
     values = ["tcp"]
   }
-  filter {
-    name = "from_port"
-    values = ["80"]
-  }
+  # filter {
+  #   name = "from_port"
+  #   values = ["80"]
+  # }
 }
 
 output "sg_rule" {
