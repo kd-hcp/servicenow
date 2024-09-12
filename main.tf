@@ -1,5 +1,4 @@
 
-/*
 variable "server_message" {
     type = string
     description = "Message displayed on server."
@@ -15,27 +14,6 @@ data "aws_ami" "amzn-linux-2023-ami" {
     name   = "name"
     values = ["al2023-ami-2023.*-x86_64"]
   }
-}
-
-# Create Security Group for compute http access
-resource "aws_security_group" "allow-http" {
-  name = "allow-http"
-}
-
-# Security Group - Ingress Rule
-resource "aws_vpc_security_group_ingress_rule" "allow-http" {
-  security_group_id = aws_security_group.allow-http.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 80
-  ip_protocol       = "tcp"
-  to_port           = 80
-}
-
-# Security Group - Egress Rule
-resource "aws_vpc_security_group_egress_rule" "allow-all-traffic" {
-  security_group_id = aws_security_group.allow-http.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = -1
 }
 
 # Create AWS Compute Instance 
@@ -59,9 +37,18 @@ resource "aws_instance" "ec2_test" {
   }
 }
 
-
 output "aws_instance_ip" {
   value = aws_instance.ec2_test.public_ip
   description = "Public IP address for web access"
 }
-*/
+
+check "check_http_ingress" {  
+  assert {
+    condition     = anytrue([for sg in aws_instance.ec2_test.vpc_security_group_ids : 
+                              length(
+                                [for rule in aws_security_group.allow-http.ingress : 
+                                  rule if rule.from_port == 80 && rule.to_port == 80 && rule.protocol == "tcp"]
+                              ) > 0])
+    error_message = "HTTP connection is not enabled on VPC Security Group"
+  }
+}
